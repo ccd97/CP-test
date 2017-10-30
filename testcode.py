@@ -52,6 +52,9 @@ if __name__ == "__main__":
             mc_time = executer.compile_cpp_code(main_fileio, main_binary)
             print("Main CPP compiled in %.5f sec" % mc_time)
             utils.delete_file(main_fileio + ".cpp")
+        elif ".py" in main_file:
+            executer.py_code_to_fileio(main_file, main_fileio)
+            print("Main PY converted")
 
     if bf_file is not None:
         if ".cpp" in bf_file:
@@ -59,6 +62,9 @@ if __name__ == "__main__":
             bfc_time = executer.compile_cpp_code(bf_fileio, bf_binary)
             print("Bruteforce CPP compiled in %.5f sec" % bfc_time)
             utils.delete_file(bf_fileio + ".cpp")
+        elif ".py" in bf_file:
+            executer.py_code_to_fileio(bf_file, bf_fileio)
+            print("Bruteforce PY converted")
 
     print()
 
@@ -74,14 +80,18 @@ if __name__ == "__main__":
         if main_file is not None:
             if ".cpp" in main_file:
                 tm = executer.run_cpp_bin(main_binary, tc_output, main_output)
-                print("Main CPP executed in %.5f sec" % tm)
-                utils.copy_file_to_folder_group(i, main_output)
+            elif ".py" in main_file:
+                tm = executer.run_py_code(main_fileio, tc_output, main_output)
+            print("Main executed in %.5f sec" % tm)
+            utils.copy_file_to_folder_group(i, main_output)
 
         if bf_file is not None:
-            if ".cpp" in main_file:
+            if ".cpp" in bf_file:
                 tm = executer.run_cpp_bin(bf_binary, tc_output, bf_output)
-                print("Bruteforce CPP executed in %.5f sec" % tm)
-                utils.copy_file_to_folder_group(i, bf_output)
+            elif ".py" in bf_file:
+                tm = executer.run_py_code(bf_fileio, tc_output, bf_output)
+            print("Bruteforce executed in %.5f sec" % tm)
+            utils.copy_file_to_folder_group(i, bf_output)
 
             diffs = utils.compare_outputs(main_output, bf_output, result)
             if diffs == 0:
@@ -93,9 +103,13 @@ if __name__ == "__main__":
 
         print()
 
+    if main_file is not None and ".py" in main_file:
+        utils.delete_file(main_fileio + ".py")
     utils.delete_file(main_output)
     utils.delete_file(main_binary)
 
+    if bf_file is not None and ".py" in bf_file:
+        utils.delete_file(bf_fileio + ".py")
     utils.delete_file(bf_output)
     utils.delete_file(bf_binary)
 
