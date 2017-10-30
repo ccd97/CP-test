@@ -36,13 +36,32 @@ bf_output = interm + config['bruteforce_file']['output']
 bf_binary = interm + config['bruteforce_file']['binary']
 
 tc_syntax = args.T
-tc_nos = args.N if bf_file is not None else 1
+tc_nos = args.N
 tc_output = interm + config['testcases']['output']
 
 result = interm + config['result']['output']
 
 
 if __name__ == "__main__":
+
+    print("-" * 10 + "  Compiling  " + "-" * 10)
+
+    if main_file is not None:
+        if ".cpp" in main_file:
+            executer.cpp_code_to_fileio(main_file, main_fileio)
+            mc_time = executer.compile_cpp_code(main_fileio, main_binary)
+            print("Main CPP compiled in %.5f sec" % mc_time)
+            utils.delete_file(main_fileio + ".cpp")
+
+    if bf_file is not None:
+        if ".cpp" in bf_file:
+            executer.cpp_code_to_fileio(bf_file, bf_fileio)
+            bfc_time = executer.compile_cpp_code(bf_fileio, bf_binary)
+            print("Bruteforce CPP compiled in %.5f sec" % bfc_time)
+            utils.delete_file(bf_fileio + ".cpp")
+
+    print()
+
     for i in range(tc_nos):
 
         print("-" * 10 + "  Test - " + str(i) + "  " + "-" * 10)
@@ -54,24 +73,14 @@ if __name__ == "__main__":
 
         if main_file is not None:
             if ".cpp" in main_file:
-                executer.cpp_code_to_fileio(main_file, main_fileio,
-                                            tc_output, main_output)
-                mc_time = executer.compile_cpp_code(main_fileio, main_binary)
-                mr_time = executer.run_cpp_bin(main_binary)
-                print("Main CPP compiled in %.5f sec" % mc_time)
-                print("Main CPP executed in %.5f sec" % mr_time)
-
+                tm = executer.run_cpp_bin(main_binary, tc_output, main_output)
+                print("Main CPP executed in %.5f sec" % tm)
                 utils.copy_file_to_folder_group(i, main_output)
 
         if bf_file is not None:
             if ".cpp" in main_file:
-                executer.cpp_code_to_fileio(bf_file, bf_fileio,
-                                            tc_output, bf_output)
-                bfc_time = executer.compile_cpp_code(bf_fileio, bf_binary)
-                bfr_time = executer.run_cpp_bin(bf_binary)
-                print("Bruteforce CPP compiled in %.5f sec" % bfc_time)
-                print("Bruteforce CPP executed in %.5f sec" % bfr_time)
-
+                tm = executer.run_cpp_bin(bf_binary, tc_output, bf_output)
+                print("Bruteforce CPP executed in %.5f sec" % tm)
                 utils.copy_file_to_folder_group(i, bf_output)
 
             diffs = utils.compare_outputs(main_output, bf_output, result)
@@ -84,13 +93,9 @@ if __name__ == "__main__":
 
         print()
 
-    if ".cpp" in main_file:
-        utils.delete_file(main_fileio + ".cpp")
     utils.delete_file(main_output)
     utils.delete_file(main_binary)
 
-    if ".cpp" in main_file:
-        utils.delete_file(bf_fileio + ".cpp")
     utils.delete_file(bf_output)
     utils.delete_file(bf_binary)
 
