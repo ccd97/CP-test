@@ -13,9 +13,9 @@ def cpp_code_to_fileio(inp, out_name):
     with open(inp, 'r') as in_f:
         out_code += in_f.read()
 
-    out_code = re.sub('int main\(.*\)[\S\s]*{', file_io_lines, out_code)
-    out_code = re.sub('cin>>', 'fin>>', out_code)
-    out_code = re.sub('cout<<', 'fout<<', out_code)
+    out_code = re.sub('int[\s]*main[\s]*\([^\)]*\)[\s]*{', file_io_lines, out_code)
+    out_code = re.sub('cin[\s]*>>', 'fin>>', out_code)
+    out_code = re.sub('cout[\s]*<<', 'fout<<', out_code)
 
     with open(out_name + ".cpp", 'w') as op_f:
         op_f.write(out_code)
@@ -31,8 +31,8 @@ def py_code_to_fileio(inp, out_name):
     with open(inp, 'r') as in_f:
         out_code += in_f.read()
 
-    inp_pattern = r'input\(\)(\.strip\(\))*'
-    out_patter = r'print\((.*)\)'
+    inp_pattern = r'input[\s]*\([\s]*\)([\s]*\.[\s]*[lr]?strip[\s]*\([\s]*\))*'
+    out_patter = r'print[^\S\r\n]*\((.*)\)'
 
     out_code = re.sub(inp_pattern, 'fin.readline().strip()', out_code)
     out_code = re.sub(out_patter, 'fout.write(str(\\1))', out_code)
