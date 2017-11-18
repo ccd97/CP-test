@@ -9,11 +9,12 @@ def cpp_code_to_fileio(inp, out_name):
     file_io_lines = "int main(int argc, char const *argv[]) {"
     file_io_lines += "\n\tstd::ifstream fin(argv[1]);"
     file_io_lines += "\n\tstd::ofstream fout(argv[2]);"
+    main_func_pattern = r'int[\s]*main[\s]*\([^\)]*\)[\s]*{'
 
     with open(inp, 'r') as in_f:
         out_code += in_f.read()
 
-    out_code = re.sub('int[\s]*main[\s]*\([^\)]*\)[\s]*{', file_io_lines, out_code)
+    out_code = re.sub(main_func_pattern, file_io_lines, out_code)
     out_code = re.sub('cin[\s]*>>', 'fin>>', out_code)
     out_code = re.sub('cout[\s]*<<', 'fout<<', out_code)
 

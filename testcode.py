@@ -40,6 +40,7 @@ tc_nos = args.N
 tc_output = interm + config['testcases']['output']
 
 result = interm + config['result']['output']
+report = interm + config['result']['report']
 
 
 if __name__ == "__main__":
@@ -68,6 +69,8 @@ if __name__ == "__main__":
 
     print()
 
+    stats = []
+
     for i in range(tc_nos):
 
         print("-" * 10 + "  Test - " + str(i) + "  " + "-" * 10)
@@ -79,18 +82,18 @@ if __name__ == "__main__":
 
         if main_file is not None:
             if ".cpp" in main_file:
-                tm = executer.run_cpp_bin(main_binary, tc_output, main_output)
+                mtm = executer.run_cpp_bin(main_binary, tc_output, main_output)
             elif ".py" in main_file:
-                tm = executer.run_py_code(main_fileio, tc_output, main_output)
-            print("Main executed in %.5f sec" % tm)
+                mtm = executer.run_py_code(main_fileio, tc_output, main_output)
+            print("Main executed in %.5f sec" % mtm)
             utils.copy_file_to_folder_group(i, main_output)
 
         if bf_file is not None:
             if ".cpp" in bf_file:
-                tm = executer.run_cpp_bin(bf_binary, tc_output, bf_output)
+                btm = executer.run_cpp_bin(bf_binary, tc_output, bf_output)
             elif ".py" in bf_file:
-                tm = executer.run_py_code(bf_fileio, tc_output, bf_output)
-            print("Bruteforce executed in %.5f sec" % tm)
+                btm = executer.run_py_code(bf_fileio, tc_output, bf_output)
+            print("Bruteforce executed in %.5f sec" % btm)
             utils.copy_file_to_folder_group(i, bf_output)
 
             diffs = utils.compare_outputs(main_output, bf_output, result)
@@ -100,8 +103,11 @@ if __name__ == "__main__":
                 print("Failure : outputs different at %d positions" % diffs)
 
             utils.copy_file_to_folder_group(i, result)
+            stats.append({'main_time': mtm, 'bf_time': btm, 'diffs': diffs})
 
         print()
+
+    utils.write_stats(stats, report)
 
     if main_file is not None and ".py" in main_file:
         utils.delete_file(main_fileio + ".py")
