@@ -27,7 +27,7 @@ interm = "intermediate/"
 
 main_file = args.I
 main_fileio = interm + config['main_file']['fileio']
-main_output = interm + config['main_file']['output']
+main_out = interm + config['main_file']['output']
 main_binary = interm + config['main_file']['binary']
 
 bf_file = args.B
@@ -37,7 +37,7 @@ bf_binary = interm + config['bruteforce_file']['binary']
 
 tc_syntax = args.T
 tc_nos = args.N
-tc_output = interm + config['testcases']['output']
+tc_out = interm + config['testcases']['output']
 
 result = interm + config['result']['output']
 report = interm + config['result']['report']
@@ -69,55 +69,66 @@ if __name__ == "__main__":
 
     print()
 
-    stats = []
+    try:
+        stats = []
 
-    for i in range(tc_nos):
+        for i in range(tc_nos):
 
-        print("-" * 10 + "  Test - " + str(i) + "  " + "-" * 10)
+            print("-" * 10 + "  Test - " + str(i) + "  " + "-" * 10)
 
-        tc_time = tcgen.get_tcs(tc_syntax, tc_output)
-        print("Testcases generated in %.5f sec" % tc_time)
+            tc_time = tcgen.get_tcs(tc_syntax, tc_out)
+            print("Testcases generated in %.5f sec" % tc_time)
 
-        utils.copy_file_to_folder_group(i, tc_output)
+            utils.copy_file_to_folder_group(i, tc_out)
 
-        if main_file is not None:
-            if ".cpp" in main_file:
-                mtm = executer.run_cpp_bin(main_binary, tc_output, main_output)
-            elif ".py" in main_file:
-                mtm = executer.run_py_code(main_fileio, tc_output, main_output)
-            print("Main executed in %.5f sec" % mtm)
-            utils.copy_file_to_folder_group(i, main_output)
+            if main_file is not None:
+                if ".cpp" in main_file:
+                    mtm = executer.run_cpp_bin(main_binary, tc_out, main_out)
+                elif ".py" in main_file:
+                    mtm = executer.run_py_code(main_fileio, tc_out, main_out)
+                print("Main executed in %.5f sec" % mtm)
+                utils.copy_file_to_folder_group(i, main_out)
 
-        if bf_file is not None:
-            if ".cpp" in bf_file:
-                btm = executer.run_cpp_bin(bf_binary, tc_output, bf_output)
-            elif ".py" in bf_file:
-                btm = executer.run_py_code(bf_fileio, tc_output, bf_output)
-            print("Bruteforce executed in %.5f sec" % btm)
-            utils.copy_file_to_folder_group(i, bf_output)
+            if bf_file is not None:
+                if ".cpp" in bf_file:
+                    btm = executer.run_cpp_bin(bf_binary, tc_out, bf_output)
+                elif ".py" in bf_file:
+                    btm = executer.run_py_code(bf_fileio, tc_out, bf_output)
+                print("Bruteforce executed in %.5f sec" % btm)
+                utils.copy_file_to_folder_group(i, bf_output)
 
-            diffs = utils.compare_outputs(main_output, bf_output, result)
-            if diffs == 0:
-                print("Success : both outputs are same")
-            else:
-                print("Failure : outputs different at %d positions" % diffs)
+                diffs = utils.compare_outputs(main_out, bf_output, result)
+                if diffs == 0:
+                    print("Success : both outputs are same")
+                else:
+                    print("Failure : output different at %d positions" % diffs)
 
-            utils.copy_file_to_folder_group(i, result)
-            stats.append({'main_time': mtm, 'bf_time': btm, 'diffs': diffs})
+                utils.copy_file_to_folder_group(i, result)
+                stats.append({'main_time': mtm, 'bf_time': btm, 'diff': diffs})
+
+            print()
+
+    except KeyboardInterrupt as e:
+        i = i-1
+        print("Error : KeyboardInterrupt")
+
+    finally:
+        utils.write_stats(stats, report)
 
         print()
+        print("Tests done : " + str(i+1) + "/" + str(tc_nos))
+        print("Report written to " + report)
+        print()
 
-    utils.write_stats(stats, report)
+        if main_file is not None and ".py" in main_file:
+            utils.delete_file(main_fileio + ".py")
+        utils.delete_file(main_out)
+        utils.delete_file(main_binary)
 
-    if main_file is not None and ".py" in main_file:
-        utils.delete_file(main_fileio + ".py")
-    utils.delete_file(main_output)
-    utils.delete_file(main_binary)
+        if bf_file is not None and ".py" in bf_file:
+            utils.delete_file(bf_fileio + ".py")
+        utils.delete_file(bf_output)
+        utils.delete_file(bf_binary)
 
-    if bf_file is not None and ".py" in bf_file:
-        utils.delete_file(bf_fileio + ".py")
-    utils.delete_file(bf_output)
-    utils.delete_file(bf_binary)
-
-    utils.delete_file(tc_output)
-    utils.delete_file(result)
+        utils.delete_file(tc_out)
+        utils.delete_file(result)

@@ -63,9 +63,9 @@ def write_stats(stats, report_file):
 
     res.write("-" * 10 + "  Wrong Testcases  " + "-" * 10 + "\n")
     for i in range(n):
-        if stats[i]['diffs'] != 0:
+        if stats[i]['diff'] != 0:
             res.write("Testcase " + str(i) + " different at "
-                      + str(stats[i]['diffs']) + " positions" + "\n")
+                      + str(stats[i]['diff']) + " positions" + "\n")
 
     res.close()
 
