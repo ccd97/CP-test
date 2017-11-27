@@ -25,12 +25,12 @@ config.read(args.C)
 
 interm = "intermediate/"
 
-code1_file = args.I1
+code1_file = args.I2 if args.I1 is None and args.I2 is not None else args.I1
 code1_fio = interm + config['code1']['fileio']
 code1_out = interm + config['code1']['output']
 code1_bin = interm + config['code1']['binary']
 
-code2_file = args.I2
+code2_file = None if args.I1 is None and args.I2 is not None else args.I2
 code2_fio = interm + config['code2']['fileio']
 code2_out = interm + config['code2']['output']
 code2_bin = interm + config['code2']['binary']
@@ -88,6 +88,7 @@ if __name__ == "__main__":
                     c1tm = executer.run_py_code(code1_fio, tc_out, code1_out)
                 print("Code1 executed in %.5f sec" % c1tm)
                 utils.copy_file_to_folder_group(i, code1_out)
+                stats.append({'code1_time': c1tm})
 
             if code2_file is not None:
                 if ".cpp" in code2_file:
@@ -100,13 +101,15 @@ if __name__ == "__main__":
                 diffs = utils.compare_outputs(code1_out, code2_out, result)
                 if diffs == 0:
                     print("Success : both outputs are same")
+                elif diffs == -1:
+                    print("Failure : invalid output generated")
                 else:
                     print("Failure : output different at %d positions" % diffs)
 
-                utils.copy_file_to_folder_group(i, result)
-                stats.append({'code1_time': c1tm,
-                              'code2_time': c2tm,
-                              'diff': diffs})
+                if diffs != -1:
+                    utils.copy_file_to_folder_group(i, result)
+
+                stats[-1].update({'code2_time': c2tm, 'diff': diffs})
 
             print()
 
@@ -115,12 +118,13 @@ if __name__ == "__main__":
         print("Error : KeyboardInterrupt")
 
     finally:
-        utils.write_stats(stats, report)
+        if stats:
+            utils.write_stats(stats, report, code2_file is None)
 
-        print()
-        print("Tests done : " + str(i+1) + "/" + str(tc_nos))
-        print("Report written to " + report)
-        print()
+            print()
+            print("Tests done : " + str(i+1) + "/" + str(tc_nos))
+            print("Report written to " + report)
+            print()
 
         if code1_file is not None and ".py" in code1_file:
             utils.delete_file(code1_fio + ".py")

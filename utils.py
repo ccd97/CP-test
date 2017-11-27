@@ -36,36 +36,51 @@ def compare_outputs(code1_op, code2_op, result_file):
     return diff
 
 
-def write_stats(stats, report_file):
+def write_stats(stats, report_file, single_file):
     res = open(report_file, 'w')
 
     stat_size = len(stats)
 
-    max_code1_time = max(stats, key=lambda x: x['code1_time'])['code1_time']
-    min_code1_time = min(stats, key=lambda x: x['code1_time'])['code1_time']
+    max_code1_time = max(stats,
+                         key=lambda x: x['code1_time'])['code1_time']
+    min_code1_time = min(stats,
+                         key=lambda x: x['code1_time'])['code1_time']
     avg_code1_time = sum(s['code1_time'] for s in stats)/stat_size
 
-    max_code2_time = max(stats, key=lambda x: x['code2_time'])['code2_time']
-    min_code2_time = min(stats, key=lambda x: x['code2_time'])['code2_time']
-    avg_code2_time = sum(s['code2_time'] for s in stats)/stat_size
-
     res.write("-" * 10 + "  Code1 File  " + "-" * 10 + "\n")
-    res.write("Minimum time required : " + str(min_code1_time) + " sec" + "\n")
-    res.write("Maximum time required : " + str(max_code1_time) + " sec" + "\n")
-    res.write("Average time required : " + str(avg_code1_time) + " sec" + "\n")
+    res.write("Minimum time : " + str(min_code1_time) + " sec" + "\n")
+    res.write("Maximum time : " + str(max_code1_time) + " sec" + "\n")
+    res.write("Average time : " + str(avg_code1_time) + " sec" + "\n")
     res.write("\n")
 
-    res.write("-" * 10 + "  Code2 File  " + "-" * 10 + "\n")
-    res.write("Minimum time required : " + str(min_code2_time) + " sec" + "\n")
-    res.write("Maximum time required : " + str(max_code2_time) + " sec" + "\n")
-    res.write("Average time required : " + str(avg_code2_time) + " sec" + "\n")
-    res.write("\n")
+    if not single_file:
+        max_code2_time = max(stats,
+                             key=lambda x: x['code2_time'])['code2_time']
+        min_code2_time = min(stats,
+                             key=lambda x: x['code2_time'])['code2_time']
+        avg_code2_time = sum(s['code2_time'] for s in stats)/stat_size
 
-    res.write("-" * 10 + "  Wrong Testcases  " + "-" * 10 + "\n")
-    for i in range(stat_size):
-        if stats[i]['diff'] != 0:
-            res.write("Testcase " + str(i) + " different at "
-                      + str(stats[i]['diff']) + " positions" + "\n")
+        res.write("-" * 10 + "  Code2 File  " + "-" * 10 + "\n")
+        res.write("Minimum time : " + str(min_code2_time) + " sec" + "\n")
+        res.write("Maximum time : " + str(max_code2_time) + " sec" + "\n")
+        res.write("Average time : " + str(avg_code2_time) + " sec" + "\n")
+        res.write("\n")
+
+        is_wrong = False
+
+        res.write("-" * 10 + "  Wrong Testcases  " + "-" * 10 + "\n")
+        for i in range(stat_size):
+            if stats[i]['diff'] == -1:
+                res.write("Testcase " + str(i) + " produced invalid output"
+                          + "\n")
+                is_wrong = True
+            elif stats[i]['diff'] != 0:
+                res.write("Testcase " + str(i) + " different at "
+                          + str(stats[i]['diff']) + " positions" + "\n")
+                is_wrong = True
+
+        if not is_wrong:
+            res.write("No wrong testcase" + "\n")
 
     res.close()
 
