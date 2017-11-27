@@ -15,8 +15,8 @@ def cpp_code_to_fileio(inp, out_name):
         out_code += in_f.read()
 
     out_code = re.sub(main_func_pattern, file_io_lines, out_code)
-    out_code = re.sub('cin[\s]*>>', 'fin>>', out_code)
-    out_code = re.sub('cout[\s]*<<', 'fout<<', out_code)
+    out_code = re.sub(r'cin[\s]*>>', 'fin>>', out_code)
+    out_code = re.sub(r'cout[\s]*<<', 'fout<<', out_code)
 
     with open(out_name + ".cpp", 'w') as op_f:
         op_f.write(out_code)
@@ -50,20 +50,20 @@ def compile_cpp_code(inp, out_bin):
         subprocess.check_call([r"/usr/bin/g++", "--std=c++14", "-Wall",
                                "-o", out_bin, inp + ".cpp"])
         end_time = time.time()
-        return (end_time - start_time)
-    except subprocess.CalledProcessError as e:
+        return end_time - start_time
+    except subprocess.CalledProcessError as _:
         print("Compilation Error in file : " + inp)
         sys.exit(1)
 
 
-def run_cpp_bin(bin, in_tc, out_res):
+def run_cpp_bin(binary, in_tc, out_res):
     try:
         start_time = time.time()
-        subprocess.check_call(["./" + bin, in_tc, out_res])
+        subprocess.check_call(["./" + binary, in_tc, out_res])
         end_time = time.time()
-        return (end_time - start_time)
-    except subprocess.CalledProcessError as e:
-        print("Runtime Error in binary_file : " + bin)
+        return end_time - start_time
+    except subprocess.CalledProcessError as _:
+        print("Runtime Error in binary_file : " + binary)
         sys.exit(1)
 
 
@@ -73,7 +73,7 @@ def run_py_code(inp, in_tc, out_res):
         start_time = time.time()
         subprocess.check_call([r"/usr/bin/python3", inp, in_tc, out_res])
         end_time = time.time()
-        return (end_time - start_time)
-    except subprocess.CalledProcessError as e:
+        return end_time - start_time
+    except subprocess.CalledProcessError as _:
         print("Runtime Error in python_file : " + inp)
         sys.exit(1)

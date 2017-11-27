@@ -8,15 +8,15 @@ values = {}
 def generate_int(line):
     minv = int(line[3]) if line[3].isdecimal() else values[line[3]]
     maxv = int(line[4]) if line[4].isdecimal() else values[line[4]]
-    rn = randint(minv, maxv)
-    values[line[2]] = rn
-    return str(rn)
+    randn = randint(minv, maxv)
+    values[line[2]] = randn
+    return str(randn)
 
 
 def generate_carray(i, cidx, synlist):
     output = ""
-    s = synlist[i][1].split('_')[1]
-    size = int(s) if s.isdecimal() else values[s]
+    ssize = synlist[i][1].split('_')[1]
+    size = int(ssize) if ssize.isdecimal() else values[ssize]
     cols = []
     while True:
         if i >= len(synlist):
@@ -37,8 +37,8 @@ def generate_carray(i, cidx, synlist):
         i = i + 1
 
     for j in range(len(values[cols[0]])):
-        for c in cols:
-            output += str(values[c][j]) + " "
+        for col in cols:
+            output += str(values[col][j]) + " "
         output += "\n"
 
     return i, output
@@ -46,8 +46,8 @@ def generate_carray(i, cidx, synlist):
 
 def generate_rarray(line):
     output = ""
-    s = line[1].split('_')[1]
-    size = int(s) if s.isdecimal() else values[s]
+    ssize = line[1].split('_')[1]
+    size = int(ssize) if ssize.isdecimal() else values[ssize]
     minv = int(line[3]) if line[3].isdecimal() else values[line[3]]
     maxv = int(line[4]) if line[4].isdecimal() else values[line[4]]
     rns = [randint(minv, maxv) for _ in range(size)]
@@ -110,14 +110,14 @@ def generate_loop(i, synlist):
     line = synlist[i]
     minv = int(line[3]) if line[3].isdecimal() else values[line[3]]
     maxv = int(line[4]) if line[4].isdecimal() else values[line[4]]
-    rn = randint(minv, maxv)
-    values[line[2]] = rn
+    randn = randint(minv, maxv)
+    values[line[2]] = randn
 
-    output += str(rn) + '\n'
+    output += str(randn) + '\n'
 
     nll = int(line[1].split('_')[1])
 
-    for j in range(rn-1):
+    for _ in range(randn-1):
         output += generate_tc(synlist[i+1:i+1+nll])
         if output[-1] != '\n':
             output += "\n"
@@ -166,15 +166,15 @@ def generate_tc(synlist):
 
 
 def get_tcs(tc_syntax, tc_output):
-    with open(tc_syntax, 'r') as sf:
+    with open(tc_syntax, 'r') as syntax_file:
         synlist = []
-        for line in sf.readlines():
+        for line in syntax_file.readlines():
             synlist.append(line.strip().split())
         start_time = time.time()
         tc_out = generate_tc(synlist)
         end_time = time.time()
 
-    with open(tc_output, 'w') as of:
-        of.write(tc_out)
+    with open(tc_output, 'w') as out_file:
+        out_file.write(tc_out)
 
-    return (end_time - start_time)
+    return end_time - start_time
