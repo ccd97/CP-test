@@ -108,16 +108,13 @@ def generate_flstring(line):
 def generate_loop(i, synlist):
     output = ""
     line = synlist[i]
-    minv = int(line[3]) if line[3].isdecimal() else values[line[3]]
-    maxv = int(line[4]) if line[4].isdecimal() else values[line[4]]
-    randn = randint(minv, maxv)
-    values[line[2]] = randn
 
-    output += str(randn) + '\n'
+    ittrs = line[3]
+    ittrs = int(ittrs) if ittrs.isdecimal() else values[ittrs]
 
-    nll = int(line[1].split('_')[1])
+    nll = int(line[1].split('_')[1]) + 1
 
-    for _ in range(randn-1):
+    for _ in range(ittrs-1):
         output += generate_tc(synlist[i+1:i+1+nll])
         if output[-1] != '\n':
             output += "\n"

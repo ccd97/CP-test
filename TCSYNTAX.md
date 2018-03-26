@@ -89,15 +89,16 @@ Content (single or any combination):
 - u - uppercase
 - l - lowercase
 - d - digits
+- ? - custom character string (See example)
 
 Example: 
 ```
 0 flstring_10 str1 ul
-1 flstring_100 str2
+1 flstring_100 str2 ? $#&
 ```
 Generates,<br>
 a string of length 10 containing lowercase and uppercase characters  -> str1 (0th line)<br>
-a string of length 100 containing lowercase, uppercase and digits  -> str2 (1st line)<br>
+a string of length 100 containing $#& characters  -> str2 (1st line)<br>
 
 ---
 #### Generate variable length string
@@ -109,32 +110,34 @@ Content (single or any combination):
 - u - uppercase
 - l - lowercase
 - d - digits
+- ? - custom character string (See example)
 
 Example: 
 ```
 0 int n 1 15 20
 1 rlstring_10_20 str1 d
-2 rlstring_10_n str2 u
+2 rlstring_10_n str3 ? *+.
 ```
 Generates,<br>
 a single integer between 15 and 20 -> n (0th line)<br>
 a string containing digits whose length is between 10 and 20  -> str1 (1st line)<br>
-a string containing uppercase characters whose length is between 10 and n -> str2 (2nd line)<br>
+a string containing \*+. characters whose length is between 10 and n -> str2 (2nd line)<br>
 
 ---
 #### Looping
 ```
-line loop_no-of-lines min-value max-value
+line loop_no-of-lines variable-name no-of-itterations
 ```
 Example: 
 ```
-0 loop_2 t 1 50
-1 rlstring_10_20 str1 d
-2 int n 1 100
-3 int k 1 10
+0 int t 1 50
+1 loop_2 lp t
+2 rlstring_10_20 str1 d
+3 int n 1 100
+4 int k 1 10
 ```
 Generates,
 a single integer between 1 and 50 -> t (0th line)<br>
-generate t times string containing digits whose length is between 10 and 20  -> str1 (1st line)<br>
-generate t times single integer between 1 and 100 -> n (2nd line)<br>
-a single integer between 1 and 10 -> k (3th line)<br>
+generate t times string containing digits whose length is between 10 and 20  -> str1 (2nd line)<br>
+generate t times single integer between 1 and 100 -> n (3rd line)<br>
+a single integer between 1 and 10 -> k (4th line)<br>
