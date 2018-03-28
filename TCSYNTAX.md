@@ -16,6 +16,9 @@ For string:
 
 3. Content of string (lowercase, uppercase, digits, etc.)
 
+A semicolon at end of line indicates a new line in generated cases.
+If it is not placed output is generated on single line.
+
 ***
 #### Generate single Integer
 
@@ -24,8 +27,8 @@ int variable-name min-value max-value
 ```
 Example: 
 ```
-int mx 0 1000
-int n 0 mx
+int mx 0 1000;
+int n 0 mx;
 ```
 Generates,<br>
 a single integer between 0 and 1000 -> mx (0th line)<br>
@@ -38,9 +41,9 @@ rarray_size variable-name min-value max-value
 ```
 Example: 
 ```
-rarray_10 ar 0 100
-int sz 0 20
-rarray_sz arr 0 1000
+rarray_10 ar 0 100;
+int sz 0 20;
+rarray_sz arr 0 1000;
 ```
 Generates,<br>
 a row array of size 10 of integers between 0 and 100 -> arr1 (0th line)<br>
@@ -61,8 +64,8 @@ Content (single or any combination):
 
 Example: 
 ```
-flstring_10 str ul
-flstring_100 strr ? $#&
+flstring_10 str ul;
+flstring_100 strr ? $#&;
 ```
 Generates,<br>
 a string of length 10 containing lowercase and uppercase characters  -> str1 (0th line)<br>
@@ -82,9 +85,9 @@ Content (single or any combination):
 
 Example: 
 ```
-int n 1 15 20
-rlstring_10_20 str d
-rlstring_10_n strr ? *+.
+int n 1 15 20;
+rlstring_10_20 str d;
+rlstring_10_n strr ? *+.;
 ```
 Generates,<br>
 a single integer between 15 and 20 -> n (0th line)<br>
@@ -101,11 +104,11 @@ Lines to be looped are to be indented by 4 spaces.
 
 Example: 
 ```
-int t 1 50
+int t 1 50;
 loop lp t
-    rlstring_10_20 str d
-    int n 1 100
-int k 1 10
+    rlstring_10_20 str d;
+    int n 1 100;
+int k 1 10;
 ```
 Generates,
 a single integer between 1 and 50 -> t (0th line)<br>

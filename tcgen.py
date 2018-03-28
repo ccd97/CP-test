@@ -105,8 +105,6 @@ def generate_loop(i, synlist):
 
     for _ in range(ittrs-1):
         output += generate_tc(synlist[i+1:i+1+nll])
-        if output[-1] != '\n':
-            output += "\n"
 
     return output
 
@@ -137,22 +135,38 @@ def generate_tc(synlist):
             output += generate_loop(i, synlist)
 
         if output and output[-1] != '\n':
-            output += "\n"
+            if line[-1] == ';':
+                output += "\n"
+            elif output[-1] != " ":
+                output += " "
 
         i += 1
 
     return output
 
 
+def get_tokens(line):
+    synline = line.strip().split()
+    if not synline:
+        return None
+    indentspace = len(line) - len(line.lstrip())
+    tokens = [indentspace]
+    tokens.extend(synline)
+
+    if tokens[-1][-1] == ';':
+        tokens[-1] = tokens[-1][:-1]
+        tokens.append(';')
+
+    return tokens
+
+
 def get_tcs(tc_syntax, tc_output):
     with open(tc_syntax, 'r') as syntax_file:
         synlist = []
         for line in syntax_file.readlines():
-            synline = line.strip().split()
-            indentspace = len(line) - len(line.lstrip())
-            synline.insert(0, indentspace)
-            if synline:
-                synlist.append(synline)
+            tkns = get_tokens(line)
+            if tkns:
+                synlist.append(tkns)
         start_time = time.time()
         tc_out = generate_tc(synlist)
         end_time = time.time()
