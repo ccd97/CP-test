@@ -1,13 +1,28 @@
 from random import randint, choice
 import string
 import time
+import re
 
 values = {}
 
 
+def get_value(s_val):
+    numptn = re.compile(r'^([0-9]+)$')
+    varptn = re.compile(r'^([a-zA-Z]+)$')
+    arrptn = re.compile(r'^([a-zA-Z]+)([0-9]+)$')
+
+    if numptn.match(s_val):
+        return int(s_val)
+    elif varptn.match(s_val):
+        return values[s_val]
+    elif arrptn.match(s_val):
+        ptnsch = re.search(arrptn, s_val)
+        return values[ptnsch.group(1)][int(ptnsch.group(2))]
+
+
 def generate_int(line):
-    minv = int(line[2]) if line[2].isdecimal() else values[line[2]]
-    maxv = int(line[3]) if line[3].isdecimal() else values[line[3]]
+    minv = get_value(line[2])
+    maxv = get_value(line[3])
     randn = randint(minv, maxv)
     values[line[1]] = randn
     return str(randn)
@@ -16,9 +31,9 @@ def generate_int(line):
 def generate_rarray(line):
     output = ""
     ssize = line[0].split('_')[1]
-    size = int(ssize) if ssize.isdecimal() else values[ssize]
-    minv = int(line[2]) if line[2].isdecimal() else values[line[2]]
-    maxv = int(line[3]) if line[3].isdecimal() else values[line[3]]
+    size = get_value(ssize)
+    minv = get_value(line[2])
+    maxv = get_value(line[3])
     rns = [randint(minv, maxv) for _ in range(size)]
     values[line[1]] = rns
 
@@ -32,8 +47,8 @@ def generate_rlstring(line):
     output = ""
     minlen = line[0].split('_')[1]
     maxlen = line[0].split('_')[2]
-    minlen = int(minlen) if minlen.isdecimal() else values[minlen]
-    maxlen = int(maxlen) if maxlen.isdecimal() else values[maxlen]
+    minlen = get_value(minlen)
+    maxlen = get_value(maxlen)
     rnlen = randint(minlen, maxlen)
 
     letters = ""
@@ -56,7 +71,7 @@ def generate_rlstring(line):
 def generate_flstring(line):
     output = ""
     flen = line[0].split('_')[1]
-    flen = int(flen) if flen.isdecimal() else values[flen]
+    flen = get_value(flen)
     letters = ""
     if line[2] == "?":
         letters += line[3].strip()
@@ -79,7 +94,7 @@ def generate_loop(i, synlist):
     line = synlist[i]
 
     ittrs = line[2]
-    ittrs = int(ittrs) if ittrs.isdecimal() else values[ittrs]
+    ittrs = get_value(ittrs)
 
     nll = int(line[0].split('_')[1]) + 1
 
@@ -101,9 +116,6 @@ def generate_tc(synlist):
 
         line = synlist[i]
 
-        if output and output[-1] != '\n':
-            output += "\n"
-
         if line[0] == 'int':
             output += generate_int(line)
 
@@ -119,16 +131,21 @@ def generate_tc(synlist):
         elif "loop" in line[0]:
             output += generate_loop(i, synlist)
 
+        if output and output[-1] != '\n':
+            output += "\n"
+
         i += 1
 
-    return output + "\n"
+    return output
 
 
 def get_tcs(tc_syntax, tc_output):
     with open(tc_syntax, 'r') as syntax_file:
         synlist = []
         for line in syntax_file.readlines():
-            synlist.append(line.strip().split())
+            synline = line.strip().split()
+            if synline:
+                synlist.append(line.strip().split())
         start_time = time.time()
         tc_out = generate_tc(synlist)
         end_time = time.time()
