@@ -5,7 +5,7 @@ Here a guide to write syntax for test-cases. Refer examples for better understan
 Every line consist of minimum 2 parts
 
 1. Type of data to be generated
-2. Variable name
+2. Variable name (should contain alphabets only)
 
 The other parts can be
 
@@ -38,9 +38,9 @@ rarray_size variable-name min-value max-value
 ```
 Example: 
 ```
-rarray_10 arr1 0 100
+rarray_10 ar 0 100
 int sz 0 20
-rarray_sz arr2 0 1000
+rarray_sz arr 0 1000
 ```
 Generates,<br>
 a row array of size 10 of integers between 0 and 100 -> arr1 (0th line)<br>
@@ -61,8 +61,8 @@ Content (single or any combination):
 
 Example: 
 ```
-flstring_10 str1 ul
-flstring_100 str2 ? $#&
+flstring_10 str ul
+flstring_100 strr ? $#&
 ```
 Generates,<br>
 a string of length 10 containing lowercase and uppercase characters  -> str1 (0th line)<br>
@@ -83,8 +83,8 @@ Content (single or any combination):
 Example: 
 ```
 int n 1 15 20
-rlstring_10_20 str1 d
-rlstring_10_n str3 ? *+.
+rlstring_10_20 str d
+rlstring_10_n strr ? *+.
 ```
 Generates,<br>
 a single integer between 15 and 20 -> n (0th line)<br>
@@ -94,14 +94,17 @@ a string containing \*+. characters whose length is between 10 and n -> str2 (2n
 ---
 #### Looping
 ```
-loop_no-of-lines variable-name no-of-itterations
+loop variable-name no-of-itterations
 ```
+
+Lines to be looped are to be indented by 4 spaces.
+
 Example: 
 ```
 int t 1 50
-loop_2 lp t
-rlstring_10_20 str1 d
-int n 1 100
+loop lp t
+    rlstring_10_20 str d
+    int n 1 100
 int k 1 10
 ```
 Generates,

@@ -21,21 +21,21 @@ def get_value(s_val):
 
 
 def generate_int(line):
-    minv = get_value(line[2])
-    maxv = get_value(line[3])
+    minv = get_value(line[3])
+    maxv = get_value(line[4])
     randn = randint(minv, maxv)
-    values[line[1]] = randn
+    values[line[2]] = randn
     return str(randn)
 
 
 def generate_rarray(line):
     output = ""
-    ssize = line[0].split('_')[1]
+    ssize = line[1].split('_')[1]
     size = get_value(ssize)
-    minv = get_value(line[2])
-    maxv = get_value(line[3])
+    minv = get_value(line[3])
+    maxv = get_value(line[4])
     rns = [randint(minv, maxv) for _ in range(size)]
-    values[line[1]] = rns
+    values[line[2]] = rns
 
     for val in rns:
         output += str(val) + " "
@@ -45,21 +45,21 @@ def generate_rarray(line):
 
 def generate_rlstring(line):
     output = ""
-    minlen = line[0].split('_')[1]
-    maxlen = line[0].split('_')[2]
+    minlen = line[1].split('_')[1]
+    maxlen = line[1].split('_')[2]
     minlen = get_value(minlen)
     maxlen = get_value(maxlen)
     rnlen = randint(minlen, maxlen)
 
     letters = ""
-    if line[2] == "?":
-        letters += line[3].strip()
+    if line[3] == "?":
+        letters += line[4].strip()
     else:
-        if "u" in line[2]:
+        if "u" in line[3]:
             letters += string.ascii_uppercase
-        if "l" in line[2]:
+        if "l" in line[3]:
             letters += string.ascii_lowercase
-        if "d" in line[2]:
+        if "d" in line[3]:
             letters += string.digits
 
     for _ in range(rnlen):
@@ -70,17 +70,17 @@ def generate_rlstring(line):
 
 def generate_flstring(line):
     output = ""
-    flen = line[0].split('_')[1]
+    flen = line[1].split('_')[1]
     flen = get_value(flen)
     letters = ""
-    if line[2] == "?":
-        letters += line[3].strip()
+    if line[3] == "?":
+        letters += line[4].strip()
     else:
-        if "u" in line[2]:
+        if "u" in line[3]:
             letters += string.ascii_uppercase
-        if "l" in line[2]:
+        if "l" in line[3]:
             letters += string.ascii_lowercase
-        if "d" in line[2]:
+        if "d" in line[3]:
             letters += string.digits
 
     for _ in range(flen):
@@ -93,10 +93,15 @@ def generate_loop(i, synlist):
     output = ""
     line = synlist[i]
 
-    ittrs = line[2]
+    ittrs = line[3]
     ittrs = get_value(ittrs)
 
-    nll = int(line[0].split('_')[1]) + 1
+    nll = 0
+    for ln in range(i+1, len(synlist)):
+        if synlist[ln][0] - line[0] == 4:
+            nll += 1
+        else:
+            break
 
     for _ in range(ittrs-1):
         output += generate_tc(synlist[i+1:i+1+nll])
@@ -116,19 +121,19 @@ def generate_tc(synlist):
 
         line = synlist[i]
 
-        if line[0] == 'int':
+        if line[1] == 'int':
             output += generate_int(line)
 
-        elif "rarray" in line[0]:
+        elif "rarray" in line[1]:
             output += generate_rarray(line)
 
-        elif "rlstring" in line[0]:
+        elif "rlstring" in line[1]:
             output += generate_rlstring(line)
 
-        elif "flstring" in line[0]:
+        elif "flstring" in line[1]:
             output += generate_flstring(line)
 
-        elif "loop" in line[0]:
+        elif "loop" in line[1]:
             output += generate_loop(i, synlist)
 
         if output and output[-1] != '\n':
@@ -144,8 +149,10 @@ def get_tcs(tc_syntax, tc_output):
         synlist = []
         for line in syntax_file.readlines():
             synline = line.strip().split()
+            indentspace = len(line) - len(line.lstrip())
+            synline.insert(0, indentspace)
             if synline:
-                synlist.append(line.strip().split())
+                synlist.append(synline)
         start_time = time.time()
         tc_out = generate_tc(synlist)
         end_time = time.time()
