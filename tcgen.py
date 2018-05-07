@@ -7,7 +7,7 @@ values = {}
 
 
 def get_value(s_val):
-    numptn = re.compile(r'^([0-9]+)$')
+    numptn = re.compile(r'^-?([0-9]+)$')
     varptn = re.compile(r'^([a-zA-Z]+)$')
     arrptn = re.compile(r'^([a-zA-Z]+)([0-9]+)$')
 
@@ -98,7 +98,8 @@ def generate_loop(i, synlist):
 
     nll = 0
     for ln in range(i+1, len(synlist)):
-        if synlist[ln][0] - line[0] == 4:
+        nspaces = synlist[ln][0] - line[0]
+        if nspaces > 0 and nspaces % 4 == 0:
             nll += 1
         else:
             break

@@ -33,10 +33,10 @@ def py_code_to_fileio(inp, out_name):
         out_code += in_f.read()
 
     inp_pattern = r'input[\s]*\([\s]*\)([\s]*\.[\s]*[lr]?strip[\s]*\([\s]*\))*'
-    out_patter = r'print[^\S\r\n]*\((.*)\)'
+    out_pattern = r'print[^\S\r\n]*\((.*)\)'
 
     out_code = re.sub(inp_pattern, 'fin.readline().strip()', out_code)
-    out_code = re.sub(out_patter, 'fout.write(str(\\1))', out_code)
+    out_code = re.sub(out_pattern, 'print(str(\\1), file=fout)', out_code)
 
     with open(out_name + ".py", 'w') as op_f:
         op_f.write(out_code)
