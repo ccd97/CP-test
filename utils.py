@@ -85,20 +85,35 @@ def write_stats(stats, report_file, single_file):
     res.close()
 
 
-def copy_file_to_folder_group(i, filename):
-    idx = filename.rfind('/') + 1
-    if not os.path.exists(filename[:idx] + str(i)):
-        os.makedirs(filename[:idx] + str(i))
-    new_filename = filename[:idx] + str(i) + '/' + filename[idx:]
+def copy_to_grp(i, filename, grptype, idxfile, idxlen):
+    sidx = filename.rfind('/') + 1
+    didx = filename.rfind('.')
+
+    if grptype == 1:
+        fldrnam = str(i).zfill(idxlen)
+    elif grptype == 2:
+        idxfile = True
+        fldrnam = filename[sidx:didx]
+    else:
+        fldrnam = str(i)
+
+    fileext = (str(i).zfill(idxlen) if idxfile else "") + ".txt"
+
+    if not os.path.exists(filename[:sidx] + fldrnam):
+        os.makedirs(filename[:sidx] + fldrnam)
+    new_filename = filename[:sidx] + fldrnam + '/'
+    new_filename += filename[sidx:didx] + fileext
     shutil.copyfile(filename, new_filename)
 
-
-def delete_folder_group(i, intermpath):
-    dirpath = intermpath + '/' + str(i)
-    if os.path.exists(dirpath):
-        shutil.rmtree(dirpath)
+    return fldrnam
 
 
 def delete_file(filename):
     if os.path.exists(filename):
         os.remove(filename)
+
+
+def delete_folders(basepath, folder_list):
+    for folder in folder_list:
+        if os.path.exists(basepath + "/" + folder):
+            shutil.rmtree(basepath + "/" + folder)
