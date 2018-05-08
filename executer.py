@@ -4,24 +4,27 @@ import time
 import re
 
 
-def cpp_code_to_fileio(inp, out_name):
-    out_code = '#include <fstream>\n'
+def c_cpp_code_to_fileio(inp, out_name, isplus):
+    if not isplus:
+        out_code = '#include <stdio.h>\n'
+    else:
+        out_code = '#include <cstdio>\n'
+
     file_io_lines = "int main(int argc, char const *argv[]) {"
-    file_io_lines += "\n\tstd::ifstream fin(argv[1]);"
-    file_io_lines += "\n\tstd::ofstream fout(argv[2]);"
+    file_io_lines += '\n\tfreopen(argv[1], "r", stdin);'
+    file_io_lines += '\n\tfreopen(argv[2], "w", stdout);'
     main_func_pattern = r'int[\s]*main[\s]*\([^\)]*\)[\s]*{'
 
     with open(inp, 'r') as in_f:
         out_code += in_f.read()
 
     out_code = re.sub(main_func_pattern, file_io_lines, out_code)
-    out_code = re.sub(r'cin[\s]*>>', 'fin>>', out_code)
-    out_code = re.sub(r'cout[\s]*<<', 'fout<<', out_code)
 
-    with open(out_name + ".cpp", 'w') as op_f:
+    file_ext = ".c" if not isplus else ".cpp"
+    with open(out_name + file_ext, 'w') as op_f:
         op_f.write(out_code)
 
-    return out_name + ".cpp"
+    return out_name + file_ext
 
 
 def py_code_to_fileio(inp, out_name):
@@ -44,6 +47,18 @@ def py_code_to_fileio(inp, out_name):
     return out_name + ".py"
 
 
+def compile_c_code(inp, out_bin):
+    try:
+        start_time = time.time()
+        subprocess.check_call([r"/usr/bin/gcc", "--std=c11", "-Wall",
+                               "-o", out_bin, inp + ".c"])
+        end_time = time.time()
+        return end_time - start_time
+    except subprocess.CalledProcessError as _:
+        print("Compilation Error in file : " + inp)
+        sys.exit(1)
+
+
 def compile_cpp_code(inp, out_bin):
     try:
         start_time = time.time()
@@ -56,7 +71,7 @@ def compile_cpp_code(inp, out_bin):
         sys.exit(1)
 
 
-def run_cpp_bin(binary, in_tc, out_res):
+def run_c_cpp_bin(binary, in_tc, out_res):
     try:
         start_time = time.time()
         subprocess.check_call(["./" + binary, in_tc, out_res])

@@ -49,20 +49,30 @@ if __name__ == "__main__":
 
     if code1_file is not None:
         if ".cpp" in code1_file:
-            executer.cpp_code_to_fileio(code1_file, code1_fio)
+            executer.c_cpp_code_to_fileio(code1_file, code1_fio, isplus=True)
             c1_time = executer.compile_cpp_code(code1_fio, code1_bin)
             print("Code1 CPP compiled in %.5f sec" % c1_time)
             utils.delete_file(code1_fio + ".cpp")
+        elif ".c" in code1_file:
+            executer.c_cpp_code_to_fileio(code1_file, code1_fio, isplus=False)
+            c1_time = executer.compile_c_code(code1_fio, code1_bin)
+            print("Code1 C compiled in %.5f sec" % c1_time)
+            utils.delete_file(code1_fio + ".c")
         elif ".py" in code1_file:
             executer.py_code_to_fileio(code1_file, code1_fio)
             print("Code1 PY converted")
 
     if code2_file is not None:
         if ".cpp" in code2_file:
-            executer.cpp_code_to_fileio(code2_file, code2_fio)
+            executer.c_cpp_code_to_fileio(code2_file, code2_fio, isplus=True)
             c2_time = executer.compile_cpp_code(code2_fio, code2_bin)
             print("Code2 CPP compiled in %.5f sec" % c2_time)
             utils.delete_file(code2_fio + ".cpp")
+        elif ".c" in code2_file:
+            executer.c_cpp_code_to_fileio(code2_file, code2_fio, isplus=False)
+            c2_time = executer.compile_c_code(code2_fio, code2_bin)
+            print("Code1 C compiled in %.5f sec" % c2_time)
+            utils.delete_file(code2_fio + ".c")
         elif ".py" in code2_file:
             executer.py_code_to_fileio(code2_file, code2_fio)
             print("Code2 PY converted")
@@ -82,8 +92,8 @@ if __name__ == "__main__":
             utils.copy_file_to_folder_group(i, tc_out)
 
             if code1_file is not None:
-                if ".cpp" in code1_file:
-                    c1tm = executer.run_cpp_bin(code1_bin, tc_out, code1_out)
+                if ".cpp" in code1_file or ".c" in code1_file:
+                    c1tm = executer.run_c_cpp_bin(code1_bin, tc_out, code1_out)
                 elif ".py" in code1_file:
                     c1tm = executer.run_py_code(code1_fio, tc_out, code1_out)
                 print("Code1 executed in %.5f sec" % c1tm)
@@ -91,8 +101,8 @@ if __name__ == "__main__":
                 stats.append({'code1_time': c1tm})
 
             if code2_file is not None:
-                if ".cpp" in code2_file:
-                    c2tm = executer.run_cpp_bin(code2_bin, tc_out, code2_out)
+                if ".cpp" in code2_file or ".c" in code2_file:
+                    c2tm = executer.run_c_cpp_bin(code2_bin, tc_out, code2_out)
                 elif ".py" in code2_file:
                     c2tm = executer.run_py_code(code2_fio, tc_out, code2_out)
                 print("Code2 executed in %.5f sec" % c2tm)
