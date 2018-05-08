@@ -16,8 +16,15 @@ For string:
 
 3. Content of string (lowercase, uppercase, digits, etc.)
 
-A semicolon at end of line indicates a new line in generated cases.
-If it is not placed output is generated on single line.
+For loop:
+
+3. Number of iteration
+
+## Rules
+* A semicolon at end of line indicates a new line in generated cases. If it is not placed output is generated on single line.
+
+
+Note: In below examples, `between a and b` also includes a and b
 
 ***
 #### Generate single Integer
@@ -35,6 +42,22 @@ a single integer between 0 and 1000 -> mx (0th line)<br>
 a single integer between 0 and mx -> n (1st line)<br>
 
 ---
+#### Generate row array of distinct integers
+```
+drarray_size variable-name min-value max-value
+```
+Example:
+```
+drarray_25 ar 0 100;
+int sz 0 20;
+drarray_sz arr 1 sz;
+```
+Generates,<br>
+a row array of size 25 of distinct integers between 0 and 100 -> ar (0th line)<br>
+a single integer between 0 and 20 -> sz (1st line)<br>
+a row array of size sz of all integers between 1 and sz in random order -> arr (2nd line)<br>
+
+---
 #### Generate row array of integers
 ```
 rarray_size variable-name min-value max-value
@@ -46,9 +69,9 @@ int sz 0 20;
 rarray_sz arr 0 1000;
 ```
 Generates,<br>
-a row array of size 10 of integers between 0 and 100 -> arr1 (0th line)<br>
+a row array of size 10 of integers between 0 and 100 -> ar (0th line)<br>
 a single integer between 0 and 20 -> sz (1st line)<br>
-a row array of size sz of integers between 0 and 1000 -> arr2 (2nd line)<br>
+a row array of size sz of integers between 0 and 1000 -> arr (2nd line)<br>
 
 ---
 #### Generate fixed length string
@@ -68,8 +91,8 @@ flstring_10 str ul;
 flstring_100 strr ? $#&;
 ```
 Generates,<br>
-a string of length 10 containing lowercase and uppercase characters  -> str1 (0th line)<br>
-a string of length 100 containing $#& characters  -> str2 (1st line)<br>
+a string of length 10 containing lowercase and uppercase characters  -> str (0th line)<br>
+a string of length 100 containing $#& characters  -> strr (1st line)<br>
 
 ---
 #### Generate variable length string
@@ -91,16 +114,17 @@ rlstring_10_n strr ? *+.;
 ```
 Generates,<br>
 a single integer between 15 and 20 -> n (0th line)<br>
-a string containing digits whose length is between 10 and 20  -> str1 (1st line)<br>
-a string containing \*+. characters whose length is between 10 and n -> str2 (2nd line)<br>
+a string containing digits whose length is between 10 and 20  -> str (1st line)<br>
+a string containing \*+. characters whose length is between 10 and n -> strr (2nd line)<br>
 
 ---
 #### Looping
 ```
-loop variable-name no-of-itterations
+loop variable-name no-of-iterations
 ```
 
-Lines to be looped are to be indented by 4 spaces.
+Lines to be looped are to be indented by 4 spaces.<br>
+Nested loops are also possible.
 
 Example: 
 ```
@@ -112,6 +136,6 @@ int k 1 10;
 ```
 Generates,
 a single integer between 1 and 50 -> t (0th line)<br>
-generate t times string containing digits whose length is between 10 and 20  -> str1 (2nd line)<br>
+generate t times string containing digits whose length is between 10 and 20  -> str (2nd line)<br>
 generate t times single integer between 1 and 100 -> n (3rd line)<br>
 a single integer between 1 and 10 -> k (after loop)<br>

@@ -1,4 +1,4 @@
-from random import randint, choice
+from random import randint, choice, sample
 import string
 import time
 import re
@@ -26,6 +26,21 @@ def generate_int(line):
     randn = randint(minv, maxv)
     values[line[2]] = randn
     return str(randn)
+
+
+def generate_drarray(line):
+    output = ""
+    ssize = line[1].split('_')[1]
+    size = get_value(ssize)
+    minv = get_value(line[3])
+    maxv = get_value(line[4])
+    rns = sample(range(minv, maxv+1), size)
+    values[line[2]] = rns
+
+    for val in rns:
+        output += str(val) + " "
+
+    return output
 
 
 def generate_rarray(line):
@@ -122,6 +137,9 @@ def generate_tc(synlist):
 
         if line[1] == 'int':
             output += generate_int(line)
+
+        elif "drarray" in line[1]:
+            output += generate_drarray(line)
 
         elif "rarray" in line[1]:
             output += generate_rarray(line)
