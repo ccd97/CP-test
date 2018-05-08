@@ -42,6 +42,10 @@ tc_out = interm + config['testcases']['output']
 result = interm + config['result']['output']
 report = interm + config['result']['report']
 
+clean_fileio = config['cleanup'].getboolean('clean_fileio')
+clean_binary = config['cleanup'].getboolean('clean_binary')
+clean_all = config['cleanup'].getboolean('clean_all')
+
 
 if __name__ == "__main__":
 
@@ -52,12 +56,10 @@ if __name__ == "__main__":
             executer.c_cpp_code_to_fileio(code1_file, code1_fio, isplus=True)
             c1_time = executer.compile_cpp_code(code1_fio, code1_bin)
             print("Code1 CPP compiled in %.5f sec" % c1_time)
-            utils.delete_file(code1_fio + ".cpp")
         elif ".c" in code1_file:
             executer.c_cpp_code_to_fileio(code1_file, code1_fio, isplus=False)
             c1_time = executer.compile_c_code(code1_fio, code1_bin)
             print("Code1 C compiled in %.5f sec" % c1_time)
-            utils.delete_file(code1_fio + ".c")
         elif ".py" in code1_file:
             executer.py_code_to_fileio(code1_file, code1_fio)
             print("Code1 PY converted")
@@ -67,12 +69,10 @@ if __name__ == "__main__":
             executer.c_cpp_code_to_fileio(code2_file, code2_fio, isplus=True)
             c2_time = executer.compile_cpp_code(code2_fio, code2_bin)
             print("Code2 CPP compiled in %.5f sec" % c2_time)
-            utils.delete_file(code2_fio + ".cpp")
         elif ".c" in code2_file:
             executer.c_cpp_code_to_fileio(code2_file, code2_fio, isplus=False)
             c2_time = executer.compile_c_code(code2_fio, code2_bin)
             print("Code1 C compiled in %.5f sec" % c2_time)
-            utils.delete_file(code2_fio + ".c")
         elif ".py" in code2_file:
             executer.py_code_to_fileio(code2_file, code2_fio)
             print("Code2 PY converted")
@@ -136,15 +136,43 @@ if __name__ == "__main__":
             print("Report written to " + report)
             print()
 
-        if code1_file is not None and ".py" in code1_file:
-            utils.delete_file(code1_fio + ".py")
-        utils.delete_file(code1_out)
-        utils.delete_file(code1_bin)
+        if code1_file is not None:
+            if clean_fileio:
+                if ".py" in code1_file:
+                    utils.delete_file(code1_fio + ".py")
+                elif ".cpp" in code1_file:
+                    utils.delete_file(code1_fio + ".cpp")
+                elif ".c" in code1_file:
+                    utils.delete_file(code1_fio + ".c")
 
-        if code2_file is not None and ".py" in code2_file:
-            utils.delete_file(code2_fio + ".py")
-        utils.delete_file(code2_out)
-        utils.delete_file(code2_bin)
+            if clean_binary:
+                if ".cpp" in code1_file or ".c" in code1_file:
+                    utils.delete_file(code1_bin)
+
+            utils.delete_file(code1_out)
+
+        if code2_file is not None:
+            if clean_fileio:
+                if ".py" in code2_file:
+                    utils.delete_file(code2_fio + ".py")
+                elif ".cpp" in code2_file:
+                    utils.delete_file(code2_fio + ".cpp")
+                elif ".c" in code2_file:
+                    utils.delete_file(code2_fio + ".c")
+
+            if clean_binary:
+                if ".cpp" in code2_file or ".c" in code2_file:
+                    utils.delete_file(code2_bin)
+
+            utils.delete_file(code2_out)
 
         utils.delete_file(tc_out)
         utils.delete_file(result)
+
+        if clean_all:
+            print("**WARNING**")
+            print("Cleaning everything except report.")
+            print("To avoid this set 'clean_all' flag to 'no' in your config")
+            print()
+            for i in range(tc_nos):
+                utils.delete_folder_group(i, interm)

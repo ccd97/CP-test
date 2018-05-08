@@ -93,6 +93,12 @@ def copy_file_to_folder_group(i, filename):
     shutil.copyfile(filename, new_filename)
 
 
+def delete_folder_group(i, intermpath):
+    dirpath = intermpath + '/' + str(i)
+    if os.path.exists(dirpath):
+        shutil.rmtree(dirpath)
+
+
 def delete_file(filename):
     if os.path.exists(filename):
         os.remove(filename)
