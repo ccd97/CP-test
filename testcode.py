@@ -15,8 +15,8 @@ parser.add_argument('-I1', metavar='--input1', type=str, required=False,
                     help='file containg code1')
 parser.add_argument('-I2', metavar='--input2', type=str, required=False,
                     help='file containg code2')
-parser.add_argument('-C', metavar='--config', type=str, default='config.cfg',
-                    help='config file')
+parser.add_argument('-C', metavar='--config', type=str,
+                    default='configs/default.ini', help='config file')
 parser.add_argument('-N', metavar='--no_test', type=int, default=10,
                     help='no of times to run test')
 
