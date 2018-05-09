@@ -48,12 +48,17 @@ grp_type = config['output'].getint('group_type')
 idx_out = config['output'].getboolean('index_output') or (grp_type != 1)
 idx_len = config['output'].getint('index_length')
 
+gen_zip = config['output'].getboolean('zip_output')
+
 clean_fileio = config['cleanup'].getboolean('clean_fileio')
 clean_binary = config['cleanup'].getboolean('clean_binary')
+clean_compare = config['cleanup'].getboolean('clean_compare')
 clean_all = config['cleanup'].getboolean('clean_all')
 
 
 if __name__ == "__main__":
+
+    utils.create_folder(interm)
 
     print("-" * 10 + "  Compiling  " + "-" * 10)
 
@@ -87,7 +92,7 @@ if __name__ == "__main__":
 
     try:
         stats = []
-        created_folders = []
+        created_folders = set()
 
         ttc_out = tc_out + ".tmp"
         tc1_out = code1_out + ".tmp"
@@ -106,7 +111,7 @@ if __name__ == "__main__":
                         'idxlen': idx_len}
 
             foldr = utils.copy_to_grp(i, ttc_out, **grp_args)
-            created_folders.append(foldr)
+            created_folders.add(foldr)
 
             if code1_file is not None:
                 if ".cpp" in code1_file or ".c" in code1_file:
@@ -116,7 +121,7 @@ if __name__ == "__main__":
                 print("Code1 executed in %.5f sec" % c1tm)
 
                 foldr = utils.copy_to_grp(i, tc1_out, **grp_args)
-                created_folders.append(foldr)
+                created_folders.add(foldr)
 
                 stats.append({'code1_time': c1tm})
 
@@ -128,7 +133,7 @@ if __name__ == "__main__":
                 print("Code2 executed in %.5f sec" % c2tm)
 
                 foldr = utils.copy_to_grp(i, tc2_out, **grp_args)
-                created_folders.append(foldr)
+                created_folders.add(foldr)
 
                 diffs = utils.compare_outputs(tc1_out, tc2_out, tresult)
                 if diffs == 0:
@@ -140,7 +145,7 @@ if __name__ == "__main__":
 
                 if diffs != -1:
                     foldr = utils.copy_to_grp(i, tresult, **grp_args)
-                    created_folders.append(foldr)
+                    created_folders.add(foldr)
 
                 stats[-1].update({'code2_time': c2tm, 'diff': diffs})
 
@@ -191,6 +196,25 @@ if __name__ == "__main__":
 
         utils.delete_file(ttc_out)
         utils.delete_file(tresult)
+
+        if clean_compare:
+            if grp_type == 2:
+                print(created_folders)
+                utils.delete_folder(code2_out)
+                utils.delete_folder(result)
+            elif grp_type == 1:
+                fend = (str(i).zfill(idx_len) if idx_out else "") + ".txt"
+                c2sidx = code2_out.rfind('/') + 1
+                ressidx = code2_out.rfind('/') + 1
+                c2fname = code2_out[c2sidx:]
+                resfname = result[ressidx:]
+                for fld in created_folders:
+                    utils.delete_file(interm + fld + "/" + c2fname + fend)
+                    utils.delete_file(interm + fld + "/" + resfname + fend)
+
+        if gen_zip:
+            utils.delete_file(interm + interm[:-1] + ".zip")
+            utils.make_zip(interm[:-1])
 
         if clean_all:
             print("**WARNING**")

@@ -1,5 +1,6 @@
 import os
 import shutil
+import tempfile
 
 
 def compare_outputs(code1_op, code2_op, result_file):
@@ -108,12 +109,27 @@ def copy_to_grp(i, filename, grptype, idxfile, idxlen):
     return fldrnam
 
 
+def create_folder(folder):
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
+
 def delete_file(filename):
     if os.path.exists(filename):
         os.remove(filename)
 
 
+def delete_folder(foldername):
+    if os.path.exists(foldername):
+        shutil.rmtree(foldername)
+
+
 def delete_folders(basepath, folder_list):
     for folder in folder_list:
-        if os.path.exists(basepath + "/" + folder):
-            shutil.rmtree(basepath + "/" + folder)
+        delete_folder(basepath + "/" + folder)
+
+
+def make_zip(folder):
+    tmpzip = tempfile.gettempdir() + "/" + folder
+    shutil.make_archive(tmpzip, 'zip', folder)
+    shutil.move(tmpzip + ".zip", folder + "/" + folder + ".zip")
